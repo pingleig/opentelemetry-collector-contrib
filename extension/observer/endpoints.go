@@ -17,6 +17,7 @@ package observer
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 type (
@@ -35,6 +36,8 @@ const (
 	PodType EndpointType = "pod"
 	// HostPortType is a hostport endpoint.
 	HostPortType EndpointType = "hostport"
+	// TaskType is a prometheus endpoint
+	TaskType EndpointType = "task"
 )
 
 var (
@@ -170,4 +173,27 @@ func (h *HostPort) Env() EndpointEnv {
 
 func (h *HostPort) Type() EndpointType {
 	return HostPortType
+}
+
+// Task is a discovered ECS task.
+// TODO: It should be a prometheus endpoint
+type Task struct {
+	// Port number of the endpoint.
+	Port int64
+	// MetricsPath is the metrics path of the endpoint.
+	MetricsPath string
+	// Labels exported by the ECS Observer (mainly for use with Prometheus).
+	Labels map[string]string
+}
+
+func (t *Task) Env() EndpointEnv {
+	return map[string]interface{}{
+		"port":        strconv.Itoa(int(t.Port)),
+		"metric_path": t.MetricsPath,
+		"labels":      t.Labels,
+	}
+}
+
+func (t *Task) Type() EndpointType {
+	return TaskType
 }

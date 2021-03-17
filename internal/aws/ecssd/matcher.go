@@ -3,6 +3,7 @@ package ecssd
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/ecs"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -121,7 +122,7 @@ func matchContainers(tasks []*Task, matcher Matcher, matcherIndex int) (*MatchRe
 		matchedTasks      []int
 		matchedContainers []MatchedContainer
 	)
-	merr := newMulti()
+	var merr error
 	tpe := matcher.Type()
 	for tIndex, t := range tasks {
 		var matched []MatchedContainer
@@ -129,8 +130,9 @@ func matchContainers(tasks []*Task, matcher Matcher, matcherIndex int) (*MatchRe
 			targets, err := matcher.MatchTargets(t, c)
 			// NOTE: we don't stop when there is an error becaause it could be one task has invalid docker label.
 			if err != nil {
+				// Keep track of unexpected error
 				if err != errNotMatched {
-					merr.Append(err)
+					multierr.AppendInto(&merr, err)
 				}
 				continue
 			}
@@ -152,5 +154,5 @@ func matchContainers(tasks []*Task, matcher Matcher, matcherIndex int) (*MatchRe
 	return &MatchResult{
 		Tasks:      matchedTasks,
 		Containers: matchedContainers,
-	}, merr.ErrorOrNil()
+	}, merr
 }

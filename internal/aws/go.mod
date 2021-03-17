@@ -7,6 +7,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/stretchr/testify v1.7.0
 	go.opentelemetry.io/otel v0.18.0
+	go.uber.org/multierr v1.5.0
 	go.uber.org/zap v1.16.0
 	gopkg.in/yaml.v2 v2.4.0
 )

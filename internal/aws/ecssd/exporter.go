@@ -3,6 +3,7 @@ package ecssd
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -39,17 +40,16 @@ func NewTaskExporter(opts TaskExporterOptions) *TaskExporter {
 }
 
 func (e *TaskExporter) ExportTasks(tasks []*Task) ([]PrometheusECSTarget, error) {
-	merr := newMulti()
+	var merr error
 	var allTargets []PrometheusECSTarget
 	for _, t := range tasks {
 		targets, err := e.ExportTask(t)
-		if err != nil {
-			merr.Append(err)
+		if multierr.AppendInto(&merr, err) {
 			continue
 		}
 		allTargets = append(allTargets, targets...)
 	}
-	return allTargets, merr.ErrorOrNil()
+	return allTargets, merr
 }
 
 // ExportTask exports all the matched container within a single task.
@@ -87,7 +87,7 @@ func (e *TaskExporter) ExportTask(task *Task) ([]PrometheusECSTarget, error) {
 	}
 
 	var targetsInTask []PrometheusECSTarget
-	merr := newMulti()
+	var merr error
 	for _, m := range task.Matched {
 		container := task.Definition.ContainerDefinitions[m.ContainerIndex]
 		// Shallow copy from task
@@ -101,8 +101,7 @@ func (e *TaskExporter) ExportTask(task *Task) ([]PrometheusECSTarget, error) {
 			target := containerTarget
 			mappedPort, err := task.MappedPort(container, int64(matchedTarget.Port))
 			// NOTE: Ignore port error
-			if err != nil {
-				merr.Append(err)
+			if multierr.AppendInto(&merr, err) {
 				continue
 			}
 			target.Address = formatAddress(privateIP, mappedPort)
@@ -113,7 +112,7 @@ func (e *TaskExporter) ExportTask(task *Task) ([]PrometheusECSTarget, error) {
 			targetsInTask = append(targetsInTask, target)
 		}
 	}
-	return targetsInTask, merr.ErrorOrNil()
+	return targetsInTask, merr
 }
 
 func formatAddress(ip string, port int64) string {

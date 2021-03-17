@@ -2,6 +2,7 @@ package ecssd
 
 import (
 	"fmt"
+	"go.uber.org/multierr"
 	"sort"
 
 	"go.uber.org/zap"
@@ -27,14 +28,14 @@ func NewTaskFilter(c Config, opts TaskFilterOptions) (*TaskFilter, error) {
 // Filter run all the matchers and return all the tasks that including at least one matched container.
 func (f *TaskFilter) Filter(tasks []*Task) ([]*Task, error) {
 	matched := make(map[MatcherType][]*MatchResult)
-	merr := newMulti()
+	var merr error
 	for tpe, matchers := range f.matchers {
 		for index, matcher := range matchers {
 			res, err := matchContainers(tasks, matcher, index)
 			// NOTE: we continue the loop even if there is error because it could some tasks has invalid labels.
 			// matchCotnainers always return non nil result even if there are errors during matching.
 			if err != nil {
-				merr.Append(fmt.Errorf("matcher failed with type %s index %d: %w", tpe, index, err))
+				multierr.AppendInto(&merr, fmt.Errorf("matcher failed with type %s index %d: %w", tpe, index, err))
 			}
 
 			f.looger.Debug("matched",
@@ -71,5 +72,5 @@ func (f *TaskFilter) Filter(tasks []*Task) ([]*Task, error) {
 		})
 		sortedTasks = append(sortedTasks, task)
 	}
-	return sortedTasks, merr.ErrorOrNil()
+	return sortedTasks, merr
 }

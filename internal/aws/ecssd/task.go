@@ -51,7 +51,6 @@ func (t *Task) EC2Tags() map[string]string {
 	return tags
 }
 
-// TODO: sanitize label name
 func (t *Task) ContainerLabels(containerIndex int) map[string]string {
 	def := t.Definition.ContainerDefinitions[containerIndex]
 	labels := make(map[string]string, len(def.DockerLabels))
@@ -62,7 +61,7 @@ func (t *Task) ContainerLabels(containerIndex int) map[string]string {
 }
 
 func (t *Task) PrivateIP() (string, error) {
-	arn := p2s(t.Task.TaskArn)
+	arn := aws.StringValue(t.Task.TaskArn)
 	switch aws.StringValue(t.Definition.NetworkMode) {
 	// Default network mode is bridge on EC2
 	case "", ecs.NetworkModeHost, ecs.NetworkModeBridge:
@@ -89,7 +88,7 @@ func (t *Task) PrivateIP() (string, error) {
 }
 
 func (t *Task) MappedPort(def *ecs.ContainerDefinition, containerPort int64) (int64, error) {
-	arn := p2s(t.Task.TaskArn)
+	arn := aws.StringValue(t.Task.TaskArn)
 	mode := aws.StringValue(t.Definition.NetworkMode)
 	switch mode {
 	case ecs.NetworkModeNone:
@@ -118,8 +117,4 @@ func (t *Task) MappedPort(def *ecs.ContainerDefinition, containerPort int64) (in
 		return 0, fmt.Errorf("port %d not found for container %s on task %s",
 			containerPort, aws.StringValue(def.Name), arn)
 	}
-}
-
-func p2s(p *string) string {
-	return aws.StringValue(p)
 }

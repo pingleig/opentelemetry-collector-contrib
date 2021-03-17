@@ -1,10 +1,8 @@
 package ecssd
 
 import (
-	"fmt"
 	"regexp"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"go.uber.org/zap"
 )
@@ -23,40 +21,15 @@ type TaskDefinitionConfig struct {
 }
 
 func (t *TaskDefinitionConfig) Init() error {
-	if t.ArnPattern == "" {
-		return nil
-	}
-
-	r, err := regexp.Compile(t.ArnPattern)
-	if err != nil {
-		return fmt.Errorf("invalid arn pattern %w", err)
-	}
-	t.arnRegex = r
-	if t.ContainerNamePattern != "" {
-		r, err = regexp.Compile(t.ContainerNamePattern)
-		if err != nil {
-			return fmt.Errorf("invalid container name pattern %w", err)
-		}
-		t.containerNameRegex = r
-	}
-	return nil
+	panic("not implemented")
 }
 
 func (t *TaskDefinitionConfig) NewMatcher(opts MatcherOptions) (Matcher, error) {
-	return &TaskDefinitionMatcher{
-		logger: opts.Logger,
-		cfg:    *t,
-	}, nil
+	panic("not implemented")
 }
 
 func taskDefintionConfigsToMatchers(cfgs []TaskDefinitionConfig) []MatcherConfig {
-	var matchers []MatcherConfig
-	for _, cfg := range cfgs {
-		// NOTE: &cfg points to the temp var, whose value would end up be the last one in the slice.
-		copied := cfg
-		matchers = append(matchers, &copied)
-	}
-	return matchers
+	panic("not implemented")
 }
 
 type TaskDefinitionMatcher struct {
@@ -73,13 +46,5 @@ func (m *TaskDefinitionMatcher) ExporterConfig() CommonExporterConfig {
 }
 
 func (m *TaskDefinitionMatcher) MatchTargets(t *Task, c *ecs.ContainerDefinition) ([]MatchedTarget, error) {
-	// Skip if arn pattern is not set.
-	if m.cfg.ArnPattern == "" || m.cfg.arnRegex == nil {
-		return nil, errNotMatched
-	}
-	if !m.cfg.arnRegex.MatchString(aws.StringValue(t.Task.TaskDefinitionArn)) {
-		return nil, errNotMatched
-	}
-	// The rest is same as ServiceMatcher
-	return matchContainerTargets(m.cfg.containerNameRegex, m.cfg.CommonExporterConfig, c)
+	panic("not implemented")
 }

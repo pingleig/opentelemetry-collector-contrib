@@ -139,8 +139,32 @@ func TestServiceDiscovery_RunAndWriteFile(t *testing.T) {
 	assert.Equal(t, string(mustReadFile(t, expectedFile)), string(mustReadFile(t, outputFile)))
 }
 
+// Util Start
+
 func mustReadFile(t *testing.T, p string) []byte {
 	b, err := ioutil.ReadFile(p)
 	require.NoError(t, err, p)
 	return b
 }
+
+func newMatcher(t *testing.T, cfg MatcherConfig) Matcher {
+	require.NoError(t, cfg.Init())
+	m, err := cfg.NewMatcher(testMatcherOptions())
+	require.NoError(t, err)
+	return m
+}
+
+func newMatcherAndMatch(t *testing.T, cfg MatcherConfig, tasks []*Task) *MatchResult {
+	m := newMatcher(t, cfg)
+	res, err := matchContainers(tasks, m, 0)
+	require.NoError(t, err)
+	return res
+}
+
+func testMatcherOptions() MatcherOptions {
+	return MatcherOptions{
+		Logger: zap.NewExample(),
+	}
+}
+
+// Util End

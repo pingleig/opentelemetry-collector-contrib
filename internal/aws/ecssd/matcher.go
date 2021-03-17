@@ -131,7 +131,6 @@ func matchContainers(tasks []*Task, matcher Matcher, matcherIndex int) (*MatchRe
 		for cIndex, c := range t.Definition.ContainerDefinitions {
 			targets, err := matcher.MatchTargets(t, c)
 			// NOTE: we don't stop when there is an error becaause it could be one task has invalid docker label.
-			// TODO: test
 			if err != nil {
 				if err != errNotMatched {
 					merr.Append(err)

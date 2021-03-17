@@ -110,15 +110,6 @@ func TestServiceDiscovery_RunAndWriteFile(t *testing.T) {
 		RefreshInterval: 100 * time.Millisecond,
 		ResultFile:      outputFile,
 		JobLabelName:    DefaultJobLabelName,
-		Services: []ServiceConfig{
-			{
-				NamePattern: "s1",
-				CommonExporterConfig: CommonExporterConfig{
-					MetricsPorts: []int{1008},
-					JobName:      "service-s1",
-				},
-			},
-		},
 		DockerLabels: []DockerLabelConfig{
 			{
 				PortLabel: "PROMETHEUS_PORT",

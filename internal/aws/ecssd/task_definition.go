@@ -29,6 +29,9 @@ func (t *TaskDefinitionConfig) NewMatcher(opts MatcherOptions) (Matcher, error) 
 }
 
 func taskDefintionConfigsToMatchers(cfgs []TaskDefinitionConfig) []MatcherConfig {
+	if len(cfgs) == 0 {
+		return nil
+	}
 	panic("not implemented")
 }
 

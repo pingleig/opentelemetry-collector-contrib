@@ -29,12 +29,21 @@ func (s *ServiceConfig) NewMatcher(opts MatcherOptions) (Matcher, error) {
 }
 
 func servicConfigsToMatchers(cfgs []ServiceConfig) []MatcherConfig {
+	if len(cfgs) == 0 {
+		return nil
+	}
 	panic("not implemented")
 }
 
 type ServiceNameFilter func(name string) bool
 
 func serviceConfigsToFilter(cfgs []ServiceConfig) (ServiceNameFilter, error) {
+	// If no service config, don't descibe any services
+	if len(cfgs) == 0 {
+		return func(name string) bool {
+			return false
+		}, nil
+	}
 	panic("not implemented")
 }
 

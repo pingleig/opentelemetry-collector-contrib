@@ -1,7 +1,6 @@
 package ecssd
 
 import (
-	"os"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -35,15 +34,6 @@ type Config struct {
 	DockerLabels []DockerLabelConfig `mapstructure:"docker_labels" yaml:"docker_labels"`
 }
 
-func (c *Config) MatcherConfigs() map[MatcherType][]MatcherConfig {
-	// We can have a registry or factory methods etc. but since we only have three type of metchers in filter.
-	return map[MatcherType][]MatcherConfig{
-		MatcherTypeService:        servicConfigsToMatchers(c.Services),
-		MatcherTypeTaskDefinition: taskDefintionConfigsToMatchers(c.TaskDefinitions),
-		MatcherTypeDockerLabel:    dockerLabelConfigToMatchers(c.DockerLabels),
-	}
-}
-
 // LoadConfig use yaml.v2 to decode the struct.
 // It returns the yaml decode error directly.
 func LoadConfig(b []byte) (Config, error) {
@@ -52,17 +42,6 @@ func LoadConfig(b []byte) (Config, error) {
 		return Config{}, err
 	}
 	return c, nil
-}
-
-// DefaultConfig does NOT work out of box because it has no filters.
-func DefaultConfig() Config {
-	return Config{
-		ClusterName:     "default",
-		ClusterRegion:   os.Getenv(AWSRegionEnvKey),
-		ResultFile:      "/etc/ecs_sd_targets.yaml",
-		RefreshInterval: DefaultRefreshInterval,
-		JobLabelName:    DefaultJobLabelName,
-	}
 }
 
 // ExampleConfig returns an example instance that matches testdata/config_example.yaml.

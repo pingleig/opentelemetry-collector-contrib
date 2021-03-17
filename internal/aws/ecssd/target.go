@@ -1,10 +1,25 @@
+// Copyright  OpenTelemetry Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package ecssd
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"regexp"
 	"strconv"
+
+	"gopkg.in/yaml.v2"
 )
 
 // target.go defines labels and structs in exported target.
@@ -19,7 +34,6 @@ const (
 // For serialization
 // - TargetToLabels and LabelsToTarget converts the struct between map[string]string.
 // - TargetsToFileSDYAML and ToTargetYAML converts it between prometheus file discovery format in YAML.
-// - TargetsToFileSDJSON and ToTargetJSON converts it between prometheus file discovery format in JSON.
 type PrometheusECSTarget struct {
 	Source                 string            `label:"source"`
 	Address                string            `label:"__address__"`

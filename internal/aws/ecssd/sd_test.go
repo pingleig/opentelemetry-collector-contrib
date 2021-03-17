@@ -19,6 +19,7 @@ func TestServiceDiscovery_RunAndWriteFile(t *testing.T) {
 		return []*Task{
 			{
 				Task: &ecs.Task{
+					TaskArn:           aws.String("arn:task:t1"),
 					TaskDefinitionArn: aws.String("t1"),
 					Containers: []*ecs.Container{
 						{
@@ -34,6 +35,12 @@ func TestServiceDiscovery_RunAndWriteFile(t *testing.T) {
 							},
 						},
 					},
+					Tags: []*ecs.Tag{
+						{
+							Key:   aws.String("ecs-tag-is"),
+							Value: aws.String("different struct from ec2.Tag"),
+						},
+					},
 				},
 				Definition: &ecs.TaskDefinition{
 					NetworkMode: aws.String(ecs.NetworkModeBridge),
@@ -43,6 +50,9 @@ func TestServiceDiscovery_RunAndWriteFile(t *testing.T) {
 						},
 						{
 							Name: aws.String("c2-t1"),
+							DockerLabels: map[string]*string{
+								"PROMETHEUS_PORT": aws.String("1008"),
+							},
 							PortMappings: []*ecs.PortMapping{
 								{
 									ContainerPort: aws.Int64(1008),
@@ -56,10 +66,17 @@ func TestServiceDiscovery_RunAndWriteFile(t *testing.T) {
 				},
 				EC2: &ec2.Instance{
 					PrivateIpAddress: aws.String("172.168.0.1"),
+					Tags: []*ec2.Tag{
+						{
+							Key:   aws.String("aws:cloudformation:is:not:valid:prometheus:label"),
+							Value: aws.String("but it will ber sanitized"),
+						},
+					},
 				},
 			},
 			{
 				Task: &ecs.Task{
+					TaskArn:           aws.String("arn:task:t2"),
 					TaskDefinitionArn: aws.String("t2"),
 					Attachments: []*ecs.Attachment{
 						{

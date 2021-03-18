@@ -95,7 +95,7 @@ func (s *ServiceDiscovery) RunAndWriteFile(ctx context.Context) error {
 			if err != nil {
 				return err
 			}
-			if err := ioutil.WriteFile(s.cfg.ResultFile, b, 0644); err != nil {
+			if err := ioutil.WriteFile(s.cfg.ResultFile, b, 0600); err != nil {
 				return err
 			}
 		}

@@ -50,11 +50,11 @@ type PrometheusECSTarget struct {
 	ContainerName          string            `label:"container_name"`
 	ContainerLabels        map[string]string `label:"container_labels"`
 	HealthStatus           string            `label:"health_status"`
-	EC2InstanceId          string            `label:"ec2_instance_id"`
+	EC2InstanceID          string            `label:"ec2_instance_id"`
 	EC2InstanceType        string            `label:"ec2_instance_type"`
 	EC2Tags                map[string]string `label:"ec2_tags"`
 	EC2VPCId               string            `label:"ec2_vpc_id"`
-	EC2SubnetId            string            `label:"ec2_subnet_id"`
+	EC2SubnetID            string            `label:"ec2_subnet_id"`
 	EC2PrivateIP           string            `label:"ec2_private_ip"`
 	EC2PublicIP            string            `label:"ec2_public_ip"`
 }
@@ -75,11 +75,11 @@ const (
 	labelContainerName          = labelPrefix + "container_name"
 	labelPrefixContainerLabels  = labelPrefix + "container_labels"
 	labelHealthStatus           = labelPrefix + "health_status"
-	labelEC2InstanceId          = labelPrefix + "ec2_instance_id"
+	labelEC2InstanceID          = labelPrefix + "ec2_instance_id"
 	labelEC2InstanceType        = labelPrefix + "ec2_instance_type"
 	labelPrefixEC2Tags          = labelPrefix + "ec2_tags"
 	labelEC2VPCId               = labelPrefix + "ec2_vpc_id"
-	labelEC2SubnetId            = labelPrefix + "ec2_subnet_id"
+	labelEC2SubnetID            = labelPrefix + "ec2_subnet_id"
 	labelEC2PrivateIP           = labelPrefix + "ec2_private_ip"
 	labelEC2PublicIP            = labelPrefix + "ec2_public_ip"
 )
@@ -99,10 +99,10 @@ func TargetToLabels(t PrometheusECSTarget) map[string]string {
 		labelTaskGroup:              t.TaskGroup,
 		labelContainerName:          t.ContainerName,
 		labelHealthStatus:           t.HealthStatus,
-		labelEC2InstanceId:          t.EC2InstanceId,
+		labelEC2InstanceID:          t.EC2InstanceID,
 		labelEC2InstanceType:        t.EC2InstanceType,
 		labelEC2VPCId:               t.EC2VPCId,
-		labelEC2SubnetId:            t.EC2SubnetId,
+		labelEC2SubnetID:            t.EC2SubnetID,
 		labelEC2PrivateIP:           t.EC2PrivateIP,
 		labelEC2PublicIP:            t.EC2PublicIP,
 	}
@@ -164,7 +164,7 @@ func TargetsToFileSDYAML(targets []PrometheusECSTarget, jobLabelName string) ([]
 // tag key are prefixed with labelNamePrefix and sanitize with sanitizeLabelName.
 func addTagsToLabels(tags map[string]string, labelNamePrefix string, labels map[string]string) {
 	for k, v := range tags {
-		labels[labelPrefixTaskTags+"_"+sanitizeLabelName(k)] = v
+		labels[labelNamePrefix+"_"+sanitizeLabelName(k)] = v
 	}
 }
 

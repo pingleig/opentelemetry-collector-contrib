@@ -15,10 +15,7 @@
 package ecssd
 
 import (
-	"regexp"
-
 	"github.com/aws/aws-sdk-go/service/ecs"
-	"go.uber.org/zap"
 )
 
 type ServiceConfig struct {
@@ -29,9 +26,6 @@ type ServiceConfig struct {
 	// ContainerNamePattern is optional, empty string means all containers in that service would be exported.
 	// Otherwise both service and container name petterns need to metch.
 	ContainerNamePattern string `mapstructure:"container_name_pattern" yaml:"container_name_pattern"`
-
-	nameRegex          *regexp.Regexp
-	containerNameRegex *regexp.Regexp
 }
 
 func (s *ServiceConfig) Init() error {
@@ -62,8 +56,7 @@ func serviceConfigsToFilter(cfgs []ServiceConfig) (ServiceNameFilter, error) {
 }
 
 type ServiceMatcher struct {
-	logger *zap.Logger
-	cfg    ServiceConfig
+	cfg ServiceConfig
 }
 
 func (s *ServiceMatcher) Type() MatcherType {

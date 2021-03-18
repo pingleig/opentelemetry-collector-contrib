@@ -53,7 +53,7 @@ type PrometheusECSTarget struct {
 	EC2InstanceID          string            `label:"ec2_instance_id"`
 	EC2InstanceType        string            `label:"ec2_instance_type"`
 	EC2Tags                map[string]string `label:"ec2_tags"`
-	EC2VPCId               string            `label:"ec2_vpc_id"`
+	EC2VpcID               string            `label:"ec2_vpc_id"`
 	EC2SubnetID            string            `label:"ec2_subnet_id"`
 	EC2PrivateIP           string            `label:"ec2_private_ip"`
 	EC2PublicIP            string            `label:"ec2_public_ip"`
@@ -78,7 +78,7 @@ const (
 	labelEC2InstanceID          = labelPrefix + "ec2_instance_id"
 	labelEC2InstanceType        = labelPrefix + "ec2_instance_type"
 	labelPrefixEC2Tags          = labelPrefix + "ec2_tags"
-	labelEC2VPCId               = labelPrefix + "ec2_vpc_id"
+	labelEC2VpcID               = labelPrefix + "ec2_vpc_id"
 	labelEC2SubnetID            = labelPrefix + "ec2_subnet_id"
 	labelEC2PrivateIP           = labelPrefix + "ec2_private_ip"
 	labelEC2PublicIP            = labelPrefix + "ec2_public_ip"
@@ -101,7 +101,7 @@ func TargetToLabels(t PrometheusECSTarget) map[string]string {
 		labelHealthStatus:           t.HealthStatus,
 		labelEC2InstanceID:          t.EC2InstanceID,
 		labelEC2InstanceType:        t.EC2InstanceType,
-		labelEC2VPCId:               t.EC2VPCId,
+		labelEC2VpcID:               t.EC2VpcID,
 		labelEC2SubnetID:            t.EC2SubnetID,
 		labelEC2PrivateIP:           t.EC2PrivateIP,
 		labelEC2PublicIP:            t.EC2PublicIP,

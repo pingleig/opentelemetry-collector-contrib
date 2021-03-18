@@ -95,7 +95,7 @@ func (e *TaskExporter) ExportTask(task *Task) ([]PrometheusECSTarget, error) {
 		taskTarget.EC2InstanceID = aws.StringValue(ec2.InstanceId)
 		taskTarget.EC2InstanceType = aws.StringValue(ec2.InstanceType)
 		taskTarget.EC2Tags = task.EC2Tags()
-		taskTarget.EC2VPCId = aws.StringValue(ec2.VpcId)
+		taskTarget.EC2VpcID = aws.StringValue(ec2.VpcId)
 		taskTarget.EC2SubnetID = aws.StringValue(ec2.SubnetId)
 		taskTarget.EC2PrivateIP = privateIP
 		taskTarget.EC2PublicIP = aws.StringValue(ec2.PublicIpAddress)

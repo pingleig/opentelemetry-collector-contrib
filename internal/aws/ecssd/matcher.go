@@ -95,8 +95,6 @@ type MatchedTarget struct {
 
 func matcherOrders() []MatcherType {
 	return []MatcherType{
-		MatcherTypeService,
-		MatcherTypeTaskDefinition,
 		MatcherTypeDockerLabel,
 	}
 }
@@ -104,9 +102,7 @@ func matcherOrders() []MatcherType {
 func newMatchers(c Config, mOpt MatcherOptions) (map[MatcherType][]Matcher, error) {
 	// We can have a registry or factory methods etc. but since we only have three type of metchers in filter.
 	matcherConfigs := map[MatcherType][]MatcherConfig{
-		MatcherTypeService:        servicConfigsToMatchers(c.Services),
-		MatcherTypeTaskDefinition: taskDefintionConfigsToMatchers(c.TaskDefinitions),
-		MatcherTypeDockerLabel:    dockerLabelConfigToMatchers(c.DockerLabels),
+		MatcherTypeDockerLabel: dockerLabelConfigToMatchers(c.DockerLabels),
 	}
 	matchers := make(map[MatcherType][]Matcher)
 	matcherCount := 0

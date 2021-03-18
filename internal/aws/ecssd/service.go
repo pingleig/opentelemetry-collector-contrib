@@ -15,6 +15,8 @@
 package ecssd
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/service/ecs"
 )
 
@@ -36,13 +38,6 @@ func (s *ServiceConfig) NewMatcher(opts MatcherOptions) (Matcher, error) {
 	panic("not implemented")
 }
 
-func servicConfigsToMatchers(cfgs []ServiceConfig) []MatcherConfig {
-	if len(cfgs) == 0 {
-		return nil
-	}
-	panic("not implemented")
-}
-
 type ServiceNameFilter func(name string) bool
 
 func serviceConfigsToFilter(cfgs []ServiceConfig) (ServiceNameFilter, error) {
@@ -52,7 +47,7 @@ func serviceConfigsToFilter(cfgs []ServiceConfig) (ServiceNameFilter, error) {
 			return false
 		}, nil
 	}
-	panic("not implemented")
+	return nil, fmt.Errorf("not implemented")
 }
 
 type ServiceMatcher struct {

@@ -36,13 +36,6 @@ func (t *TaskDefinitionConfig) NewMatcher(opts MatcherOptions) (Matcher, error) 
 	panic("not implemented")
 }
 
-func taskDefintionConfigsToMatchers(cfgs []TaskDefinitionConfig) []MatcherConfig {
-	if len(cfgs) == 0 {
-		return nil
-	}
-	panic("not implemented")
-}
-
 type TaskDefinitionMatcher struct {
 	cfg TaskDefinitionConfig
 }

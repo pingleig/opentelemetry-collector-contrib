@@ -16,7 +16,9 @@ package ecsobserver
 
 import (
 	"fmt"
+	"regexp"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -96,6 +98,8 @@ type MatchedTarget struct {
 
 func matcherOrders() []MatcherType {
 	return []MatcherType{
+		MatcherTypeService,
+		MatcherTypeTaskDefinition,
 		MatcherTypeDockerLabel,
 	}
 }
@@ -103,7 +107,9 @@ func matcherOrders() []MatcherType {
 func newMatchers(c Config, mOpt MatcherOptions) (map[MatcherType][]Matcher, error) {
 	// We can have a registry or factory methods etc. but since we only have three type of metchers in filter.
 	matcherConfigs := map[MatcherType][]MatcherConfig{
-		MatcherTypeDockerLabel: dockerLabelConfigToMatchers(c.DockerLabels),
+		MatcherTypeService:        servicConfigsToMatchers(c.Services),
+		MatcherTypeTaskDefinition: taskDefintionConfigsToMatchers(c.TaskDefinitions),
+		MatcherTypeDockerLabel:    dockerLabelConfigToMatchers(c.DockerLabels),
 	}
 	matchers := make(map[MatcherType][]Matcher)
 	matcherCount := 0
@@ -167,4 +173,27 @@ func matchContainers(tasks []*Task, matcher Matcher, matcherIndex int) (*MatchRe
 		Tasks:      matchedTasks,
 		Containers: matchedContainers,
 	}, merr
+}
+
+// matcherContainerTargets is used by TaskDefinitionMatcher and ServiceMatcher.
+// The only exception is DockerLabelMatcher because it get ports from docker lebel.
+func matchContainerTargets(nameRegex *regexp.Regexp, expCfg CommonExporterConfig, container *ecs.ContainerDefinition) ([]MatchedTarget, error) {
+	if nameRegex != nil && !nameRegex.MatchString(aws.StringValue(container.Name)) {
+		return nil, errNotMatched
+	}
+	// Match based on port
+	var targets []MatchedTarget
+	// Only export container if it has at least one matching port.
+	for _, portMapping := range container.PortMappings {
+		for _, port := range expCfg.MetricsPorts {
+			if aws.Int64Value(portMapping.ContainerPort) == int64(port) {
+				targets = append(targets, MatchedTarget{
+					Port:        port,
+					MetricsPath: expCfg.MetricsPath,
+					Job:         expCfg.JobName,
+				})
+			}
+		}
+	}
+	return targets, nil
 }

@@ -37,17 +37,19 @@ type ServiceDiscoveryOptions struct {
 }
 
 func NewDiscovery(cfg Config, opts ServiceDiscoveryOptions) (*ServiceDiscovery, error) {
-	var (
-		fetcher Fetcher
-		err     error
-	)
+	serviceNameFilter, err := serviceConfigsToFilter(cfg.Services)
+	if err != nil {
+		return nil, fmt.Errorf("init serivce name filter failed: %w", err)
+	}
+	var fetcher Fetcher
 	if opts.FetcherOverride != nil {
 		fetcher = opts.FetcherOverride
 	} else {
 		fetcher, err = NewTaskFetcher(TaskFetcherOptions{
-			Logger:  opts.Logger,
-			Region:  cfg.ClusterRegion,
-			Cluster: cfg.ClusterName,
+			Logger:            opts.Logger,
+			Region:            cfg.ClusterRegion,
+			Cluster:           cfg.ClusterName,
+			ServiceNameFilter: serviceNameFilter,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("init fetcher failed: %w", err)

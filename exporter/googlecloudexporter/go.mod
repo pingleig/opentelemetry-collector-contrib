@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.6
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.20.0
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.20.1
 	github.com/armon/go-metrics v0.3.3 // indirect
 	github.com/aws/aws-sdk-go v1.38.36 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0
